@@ -109,24 +109,22 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     
         <script>
+            // This function is to retrieve the CSRF token from the cookie
+            function getCSRFToken() {
+                return $('[name=csrfmiddlewaretoken]').val();
+            }
+        
             function getStockGraph() {
-                var ticker = document.getElementById('ticker').value;
+                var ticker = $('#ticker').val();
                 if (ticker) {
-                    // Get the CSRF token from the page
-                    var csrfToken = $('[name=csrfmiddlewaretoken]').val();
-            
-                    
                     $.ajax({
                         type: 'POST',
-                        url: 'graph/',  
-                        data: {ticker: ticker, csrfmiddlewaretoken: csrfToken},  
+                        url: 'graph/',
+                        headers: { 'X-CSRFToken': getCSRFToken() }, // Set the CSRF token in the request headers
+                        data: { ticker: ticker }, // You no longer need to include the csrfmiddlewaretoken in the data payload
                         dataType: 'json',
                         success: function(response) {
-                            if (typeof response === 'object') {
-                                Plotly.newPlot('stockGraph', response);
-                            } else {
-                                Plotly.newPlot('stockGraph', JSON.parse(response));
-                            }
+                            Plotly.newPlot('stockGraph', response);
                         },
                         error: function(error) {
                             alert('Error fetching graph: ' + error.responseText);

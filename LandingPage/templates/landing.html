@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/floppy.ico' %}">
+        <title>Landing</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* Add your custom styles here */
+        h2 {
+            text-align: center;
+            font-family: "Helvetica";
+            font-variant: small-caps;
+            color: #000000;
+        } 
+        h3 {
+            text-align: center;
+            font-family: "Helvetica";
+            font-variant: small-caps;
+            color: #000000;
+        }       
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 4px 0;
+            display: block;
+        }
+        #dropdownMenuButton {
+            background-color: powderblue;
+        }
+        .dropdown-menu {
+            background-color: #f8f9fa;
+            border-radius: 0;
+            width: auto;
+        }
+        .dropdown-item {
+            color: #333;
+        }
+        .dropdown-item:hover {
+            color: #fff;
+            background-color: #007bff;
+        }
+        b {
+            font-family: "Helvetica", sans-serif;
+        }
+        a {
+            font-family: "Helvetica", sans-serif;
+        }
+        .article-title{
+            font-family: "Helvetica", sans-serif;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 0em;
+        }
+        .article-date{
+            font-family: "Helvetica", sans-serif;
+            font-size: 0.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="topBar">
+            <div><b style="font-weight:bold;">Topher's Dash - </b><a href="https://www.linkedin.com/in/topher-fronda/" target="_blank" id="topbarTopher">LinkedIn</a> <a href="https://github.com/TopherF22" target="_blank" id="topbarGithub">Github</a></div>
+            <div>{% now "F j, Y" %}</div>
+        </div>
+        <div class="container-fluid mt-4">
+            <div class="row">
+                <!-- Left Panel -->
+                <div class="col-md-3">
+                    <h3>Latest News</h3>
+                    {% for article in news_data %}
+                        <h4 class="article-title"><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h4>
+                        <p class="article-date">{{ article.date }}</p>
+                    {% empty %}
+                        <p>No news articles available.</p>
+                    {% endfor %}
+                </div>
+    
+                <!-- Middle Panel -->
+                <div class="col-md-6">
+                    <h2>Stock Price Graph</h2>
+                    <form id="stockForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="ticker">Enter Stock Ticker:</label>
+                            <input type="text" class="form-control" id="ticker" name="ticker" required>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="getStockGraph()">Get Graph</button>
+                    </form>
+                    <div id="stockGraph" class="mt-4"></div>
+                </div>
+    
+                <!-- Right Panel -->
+                <div class="col-md-3">
+                    <h3>Statistics</h3>
+                    <!-- Add your statistics content here -->
+                </div>
+            </div>
+        </div>
+    
+        <!-- Include jQuery, Popper.js, and Bootstrap JS for dropdown functionality -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+        <script>
+            function getStockGraph() {
+                var ticker = document.getElementById('ticker').value;
+                if (ticker) {
+                    // Get the CSRF token from the page
+                    var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: 'graph/',  
+                        data: {ticker: ticker, csrfmiddlewaretoken: csrfToken},  
+                        dataType: 'json',
+                        success: function(response) {
+                            if (typeof response === 'object') {
+                                Plotly.newPlot('stockGraph', response);
+                            } else {
+                                Plotly.newPlot('stockGraph', JSON.parse(response));
+                            }
+                        },
+                        error: function(error) {
+                            alert('Error fetching graph: ' + error.responseText);
+                        }
+                    });
+                } else {
+                    alert('Please enter a stock ticker.');
+                }
+            }
+        </script>
+    </body>
+    </html>
+    

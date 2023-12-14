@@ -119,9 +119,9 @@
                 if (ticker) {
                     $.ajax({
                         type: 'POST',
-                        url: 'graph/',
-                        headers: { 'X-CSRFToken': getCSRFToken() }, // Set the CSRF token in the request headers
-                        data: { ticker: ticker }, // You no longer need to include the csrfmiddlewaretoken in the data payload
+                        url: '/graph/',  // Added a slash at the beginning to ensure it's an absolute path
+                        headers: { 'X-CSRFToken': getCSRFToken() },
+                        data: { 'ticker': ticker },
                         dataType: 'json',
                         success: function(response) {
                             Plotly.newPlot('stockGraph', response);
@@ -134,7 +134,7 @@
                     alert('Please enter a stock ticker.');
                 }
             }
-        </script>
+        </script>        
     </body>
     </html>
     

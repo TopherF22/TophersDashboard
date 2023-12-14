@@ -55,6 +55,8 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True  
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = ['https://tophersdashboard.azurewebsites.net']
+
 ROOT_URLCONF = 'DjangoApp.urls'
 
 TEMPLATES = [

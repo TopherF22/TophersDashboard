@@ -134,15 +134,16 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'console': {
-            'level': 'DEBUG',
+        'azure': {
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',  # Default is stderr
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+            'handlers': ['azure'],
+            'level': 'INFO',
             'propagate': True,
         },
     },

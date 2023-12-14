@@ -27,8 +27,10 @@ jobs:
     - name: Copy files for deployment
       run: |
         mkdir artifact
-        cp -R ./* artifact/
-        mv artifact/antenv/lib/python3.11/site-packages/* artifact/
+        shopt -s extglob
+        cp -R !(artifact) artifact/
+        cp -a antenv/. artifact/antenv/
+
 
     - name: Package files
       run: |
